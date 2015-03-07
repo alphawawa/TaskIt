@@ -52,10 +52,10 @@ class TaskDetailViewController: UIViewController {
     @IBAction func doneBarButtonItemPressed(sender: UIBarButtonItem) {
         
         // gather the data just entered in the Task Detail window by putting the text fields into a variable of type TaskModel
-        var task = TaskModel(task: taskTextField.text, subtask: subtaskTextField.text, date: dueDatePicker.date)
+        var task = TaskModel(task: taskTextField.text, subtask: subtaskTextField.text, date: dueDatePicker.date, completed: false)
         
         // set the element in the original taskArray equal to that task placeholder we just created above, at the location in the array that initially selected by the user
-        mainVC.taskArray[mainVC.tableView.indexPathForSelectedRow()!.row] = task
+        mainVC.baseArray[0][mainVC.tableView.indexPathForSelectedRow()!.row] = task
         
         self.navigationController?.popViewControllerAnimated(true)
     }
