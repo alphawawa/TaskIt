@@ -13,10 +13,6 @@ class TaskDetailViewController: UIViewController {
     // this variable allows us to pass the name of the task tapped to the newly created Task Detail viewcontroller.  However, when does that info get passed to this variable?
     var detailTaskModel: TaskModel!
     
-    // this appears to be the delegate for the actual data in ViewControlller, no?  Or at least some sort of in-between placeholder for the data that is created/edited in this view and has to be saved in the main view.
-    var mainVC: ViewController!
-    
-    
     // these are the UI elements of the Task Detail screen
 
     @IBOutlet weak var taskTextField: UITextField!
@@ -51,11 +47,17 @@ class TaskDetailViewController: UIViewController {
     
     @IBAction func doneBarButtonItemPressed(sender: UIBarButtonItem) {
         
-        // gather the data just entered in the Task Detail window by putting the text fields into a variable of type TaskModel
-        var task = TaskModel(task: taskTextField.text, subtask: subtaskTextField.text, date: dueDatePicker.date, completed: false)
+        let appDelegate = (UIApplication.sharedApplication().delegate as AppDelegate)
         
-        // set the element in the original taskArray equal to that task placeholder we just created above, at the location in the array that initially selected by the user
-        mainVC.baseArray[0][mainVC.tableView.indexPathForSelectedRow()!.row] = task
+        
+        // update each of the elements with the text fields and data from date picker
+        detailTaskModel.task = taskTextField.text
+        detailTaskModel.subtask = subtaskTextField.text
+        detailTaskModel.date = dueDatePicker.date
+        detailTaskModel.completed = detailTaskModel.completed
+        
+        // save to CoreData
+        appDelegate.saveContext()
         
         self.navigationController?.popViewControllerAnimated(true)
     }

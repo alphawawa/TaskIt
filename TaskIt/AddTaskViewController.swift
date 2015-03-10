@@ -7,13 +7,11 @@
 //
 
 import UIKit
+import CoreData
 
 class AddTaskViewController: UIViewController {
     
     // property that allows us to pass *the* instance of ViewController to this AddTaskViewController (how the hell does it do that?)
-    
-    // this variable will give us access to the main task array.
-    var mainVC: ViewController!
     
     @IBOutlet weak var taskTextField: UITextField!
     @IBOutlet weak var subtaskTextField: UITextField!
@@ -35,12 +33,37 @@ class AddTaskViewController: UIViewController {
     }
     
     @IBAction func addTaskButtonTapped(sender: UIButton) {
+ 
+        // this gives us "access" to an instance of our AppDelegate.  UIApplication represents our entire application.
+        let appDelegate = (UIApplication.sharedApplication().delegate as AppDelegate)
         
-        // we create a new task with new parameters from the UI elements.
-        var task = TaskModel(task: taskTextField.text, subtask: subtaskTextField.text, date: dueDatePicker.date, completed:false)
+        // now we can manage our "managedObject Context
+        let managedObjectContext = appDelegate.managedObjectContext
         
-        // now add this task to the task array of the view controller
-        mainVC.baseArray[0].append(task)
+        // ??
+        let entityDescription = NSEntityDescription.entityForName("TaskModel", inManagedObjectContext: managedObjectContext!)
+        
+        // create our task instance
+        let task = TaskModel(entity: entityDescription!, insertIntoManagedObjectContext: managedObjectContext!)
+        
+        task.task = taskTextField.text
+        task.subtask = subtaskTextField.text
+        task.date = dueDatePicker.date
+        task.completed = false
+        
+        // this saves any changes to our entity, thus far.  Anything after this is not saved.
+        appDelegate.saveContext()
+        
+        // "How do we get back all the entities that we created?"
+        var request = NSFetchRequest(entityName: "TaskModel")
+        var error:NSError? = nil
+        
+        // "we have to unwrap this because there is a chance it could be nil."  Not an explanation, BitFountain
+        var results:NSArray = managedObjectContext!.executeFetchRequest(request, error: &error)!
+        
+        for res in results {
+            println(res)
+        }
         
         self.dismissViewControllerAnimated(true, completion: nil)
     }
